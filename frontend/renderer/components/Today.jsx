@@ -1,66 +1,88 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts"
 
-const COLORS = ["#52b788", "#e63946", "#f4a261", "#adb5bd"]
+const COLORS = ["#22c55e", "#ef4444", "#f59e0b", "#6366f1"]
 
 export default function Today({ data }) {
-  if (!data) return <p style={{ color: "#555" }}>Loading...</p>
+  if (!data) return <Loader />
 
   const pieData = [
-    { name: "Productive", value: data.productive_hours },
-    { name: "Non-Productive", value: data.nonproductive_hours },
-    { name: "Gaming", value: data.game_hours },
-    { name: "Neutral", value: data.neutral_hours },
+    { name: "Productive", value: parseFloat(data.productive_hours) },
+    { name: "Non-Productive", value: parseFloat(data.nonproductive_hours) },
+    { name: "Gaming", value: parseFloat(data.game_hours) },
+    { name: "Neutral", value: parseFloat(data.neutral_hours) },
   ].filter(d => d.value > 0)
 
   return (
-    <div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
-        {/* Pie chart */}
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+
+        {/* Donut */}
         <div style={card}>
-          <p style={cardTitle}>Today's breakdown</p>
+          <SectionTitle>Today's breakdown</SectionTitle>
           {pieData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={260}>
+            <ResponsiveContainer width="100%" height={220}>
               <PieChart>
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} dataKey="value" paddingAngle={3}>
+                <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={95}
+                  dataKey="value" paddingAngle={3} strokeWidth={0}>
                   {pieData.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
                 </Pie>
-                <Tooltip formatter={(v) => `${v} hrs`} contentStyle={{ background: "#1a1a1a", border: "1px solid #333", borderRadius: 8 }} />
-                <Legend />
+                <Tooltip formatter={(v) => [`${v} hrs`]}
+                  contentStyle={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 10, fontSize: 12, boxShadow: "0 4px 16px rgba(0,0,0,0.08)" }} />
+                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 12, paddingTop: 8 }} />
               </PieChart>
             </ResponsiveContainer>
-          ) : (
-            <p style={{ color: "#555", textAlign: "center", paddingTop: 80 }}>No data yet — start tracking!</p>
-          )}
+          ) : <Empty />}
         </div>
 
         {/* Top apps */}
         <div style={card}>
-          <p style={cardTitle}>Top apps today</p>
-          {data.top_apps?.map((app, i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: "1px solid #222" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: app.is_productive ? "#52b788" : "#e63946" }} />
-                <span style={{ fontSize: 13, color: "#ccc" }}>{app.app_name}</span>
-              </div>
-              <span style={{ fontSize: 13, color: "#888" }}>{app.hours}h</span>
-            </div>
-          ))}
+          <SectionTitle>Top apps</SectionTitle>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {data.top_apps?.slice(0, 5).map((app, i) => {
+              const pct = data.total_hours > 0 ? (app.hours / data.total_hours * 100) : 0
+              return (
+                <div key={i}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{
+                        width: 26, height: 26, borderRadius: 6, flexShrink: 0,
+                        background: app.is_productive ? "#f0fdf4" : "#fef2f2",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: 11, fontWeight: 700, color: app.is_productive ? "#22c55e" : "#ef4444"
+                      }}>{app.app_name.charAt(0)}</div>
+                      <span style={{ fontSize: 12, color: "#334155", fontWeight: 500 }}>{app.app_name}</span>
+                    </div>
+                    <span style={{ fontSize: 12, color: "#94a3b8" }}>{app.hours}h</span>
+                  </div>
+                  <div style={{ height: 4, background: "#f1f5f9", borderRadius: 2 }}>
+                    <div style={{ height: "100%", width: `${pct}%`,
+                      background: app.is_productive ? "#22c55e" : "#ef4444",
+                      borderRadius: 2, transition: "width 1s ease" }} />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
 
       {/* Top sites */}
-      <div style={{ ...card, marginTop: 24 }}>
-        <p style={cardTitle}>Top sites today</p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
-          {data.top_sites?.map((site, i) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "8px 12px", background: "#111", borderRadius: 8, border: "1px solid #222" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: site.is_productive ? "#52b788" : "#e63946", flexShrink: 0 }} />
-                <span style={{ fontSize: 12, color: "#ccc", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 200 }}>
+      <div style={card}>
+        <SectionTitle>Top sites</SectionTitle>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+          {data.top_sites?.slice(0, 6).map((site, i) => (
+            <div key={i} style={{
+              padding: "10px 14px", background: "#f8fafc", borderRadius: 10,
+              border: "1px solid #f1f5f9", display: "flex", alignItems: "center", gap: 8
+            }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
+                background: site.is_productive ? "#22c55e" : "#ef4444" }} />
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: 12, color: "#334155", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontWeight: 500 }}>
                   {site.site?.split("/")[0]}
-                </span>
+                </div>
+                <div style={{ fontSize: 11, color: "#94a3b8" }}>{site.hours}h</div>
               </div>
-              <span style={{ fontSize: 12, color: "#888", flexShrink: 0 }}>{site.hours}h</span>
             </div>
           ))}
         </div>
@@ -69,5 +91,10 @@ export default function Today({ data }) {
   )
 }
 
-const card = { background: "#1a1a1a", border: "1px solid #222", borderRadius: 12, padding: "20px" }
-const cardTitle = { margin: "0 0 16px", fontSize: 14, fontWeight: 600, color: "#888", textTransform: "uppercase", letterSpacing: 1 }
+const card = { background: "#fff", border: "1px solid #e2e8f0", borderRadius: 14, padding: "18px 20px" }
+const SectionTitle = ({ children }) => (
+  <div style={{ fontSize: 12, fontWeight: 600, color: "#94a3b8", textTransform: "uppercase",
+    letterSpacing: 0.8, marginBottom: 14 }}>{children}</div>
+)
+const Loader = () => <div style={{ color: "#94a3b8", fontSize: 13, padding: 20 }}>Loading...</div>
+const Empty = () => <div style={{ color: "#94a3b8", fontSize: 13, textAlign: "center", padding: "50px 0" }}>No data yet</div>
