@@ -1,0 +1,29 @@
+# Python
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+*.pyc
+__pycache__/
+
+# Database (personal data — don't push)
+focusflow.db
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Ollama models (too large for GitHub)
+*.bin
+*.gguf
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Logs
+*.log

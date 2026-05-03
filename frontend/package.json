@@ -1,0 +1,25 @@
+{
+  "name": "focusflow",
+  "version": "1.0.0",
+  "description": "FocusFlow - Intelligent Screen Time Tracker",
+  "main": "main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "electron": "electron .",
+    "start": "concurrently \"vite\" \"wait-on http://localhost:3000 && electron .\""
+  },
+  "dependencies": {
+    "electron": "^36.1.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "recharts": "^2.15.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.4.1",
+    "concurrently": "^9.1.2",
+    "electron-builder": "^26.0.12",
+    "vite": "^6.3.3",
+    "wait-on": "^8.0.3"
+  }
+}
