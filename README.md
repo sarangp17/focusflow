@@ -127,20 +127,7 @@ No internet required after initial setup.
 ## Completely Private
 Your productivity data never leaves your laptop.
 
----
-
-# Screenshots
-
-> Replace these placeholders with actual screenshots after building the UI.
-
-## Dashboard
-![Dashboard](./assets/dashboard.png)
-
-## Weekly Analytics
-![Weekly Analytics](./assets/weekly.png)
-
-## App Breakdown
-![Apps](./assets/apps.png)
+/apps.png)
 
 ---
 
