@@ -17,7 +17,7 @@
 
 # What is FocusFlow?
 
-FocusFlow is a free, offline-first desktop application that intelligently tracks your screen activity and classifies every minute of your day as:
+FocusFlow is a free, **offline-first desktop application** that intelligently tracks your screen activity and classifies every minute of your day as:
 
 - ✅ Productive
 - ❌ Non-productive
